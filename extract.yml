@@ -1,0 +1,32 @@
+name: Extract VM Details
+
+on: workflow_dispatch
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Sample JSON
+        run: |
+          echo '{
+            "instance_id": "i-0123456789abcdef",
+            "public_ip": "54.123.45.67",
+            "private_ip": "10.0.0.5",
+            "instance_type": "t2.micro"
+          }' > vm.json
+
+      - name: Extract Values Using JQ
+        run: |
+          INSTANCE_ID=$(jq -r '.instance_id' vm.json)
+          PUBLIC_IP=$(jq -r '.public_ip' vm.json)
+          INSTANCE_TYPE=$(jq -r '.instance_type' vm.json)
+
+          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+          echo "PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV
+          echo "INSTANCE_TYPE=$INSTANCE_TYPE" >> $GITHUB_ENV
+
+      - name: Print Extracted Values
+        run: |
+          echo "Instance ID: $INSTANCE_ID"
+          echo "Public IP: $PUBLIC_IP"
+          echo "Instance Type: $INSTANCE_TYPE"
