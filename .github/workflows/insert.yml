@@ -1,0 +1,19 @@
+name: Insert JSON Key
+
+on: workflow_dispatch
+
+jobs:
+  insert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON File
+        run: |
+          echo '{
+            "instance_id": "i-0123456789abcdef",
+            "instance_type": "t2.micro"
+          }' > vm.json
+
+      - name: Insert New Key
+        run: |
+          jq '. + { "region": "us-east-1" }' vm.json > temp.json && mv temp.json vm.json
+          cat vm.json
