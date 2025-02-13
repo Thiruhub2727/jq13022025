@@ -1,0 +1,17 @@
+name: Merge Nested JSON Objects
+
+on: workflow_dispatch
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON Files
+        run: |
+          echo '{"user": {"name": "Alice", "age": 30}}' > user.json
+          echo '{"user": {"city": "New York", "country": "USA"}}' > location.json
+
+      - name: Merge JSON Files
+        run: |
+          jq -s '.[0].user * .[1].user' user.json location.json > merged.json
+          cat merged.json
