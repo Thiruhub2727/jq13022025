@@ -1,0 +1,17 @@
+name: Merge Two JSON Files
+
+on: workflow_dispatch
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON Files
+        run: |
+          echo '{"name": "Alice", "age": 30}' > user1.json
+          echo '{"city": "New York", "country": "USA"}' > user2.json
+
+      - name: Merge JSON Files
+        run: |
+          jq -s '.[0] * .[1]' user1.json user2.json > merged.json
+          cat merged.json
