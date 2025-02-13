@@ -1,0 +1,22 @@
+name: Sort JSON by Instance ID
+
+on: workflow_dispatch
+
+jobs:
+  sort:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON File
+        run: |
+          echo '{
+            "instances": [
+              {"id": "i-789", "type": "c5.large"},
+              {"id": "i-123", "type": "t2.micro"},
+              {"id": "i-456", "type": "m5.large"}
+            ]
+          }' > instances.json
+
+      - name: Sort Instances by ID
+        run: |
+          jq '.instances |= sort_by(.id)' instances.json > sorted.json
+          cat sorted.json
