@@ -1,0 +1,20 @@
+name: Delete JSON Key
+
+on: workflow_dispatch
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON File
+        run: |
+          echo '{
+            "instance_id": "i-0123456789abcdef",
+            "public_ip": "54.123.45.67",
+            "instance_type": "t2.micro"
+          }' > vm.json
+
+      - name: Delete Public IP
+        run: |
+          jq 'del(.public_ip)' vm.json > temp.json && mv temp.json vm.json
+          cat vm.json
