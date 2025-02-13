@@ -1,0 +1,39 @@
+name: Extract Nested JSON Data
+
+on: workflow_dispatch
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Sample Nested JSON
+        run: |
+          echo '{
+            "Reservations": [
+              {
+                "Instances": [
+                  {
+                    "InstanceId": "i-0abcd1234efgh5678",
+                    "State": {"Name": "running"},
+                    "PublicIpAddress": "3.92.183.54"
+                  }
+                ]
+              }
+            ]
+          }' > instances.json
+
+      - name: Extract Instance Details
+        run: |
+          INSTANCE_ID=$(jq -r '.Reservations[0].Instances[0].InstanceId' instances.json)
+          INSTANCE_STATE=$(jq -r '.Reservations[0].Instances[0].State.Name' instances.json)
+          PUBLIC_IP=$(jq -r '.Reservations[0].Instances[0].PublicIpAddress' instances.json)
+
+          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+          echo "INSTANCE_STATE=$INSTANCE_STATE" >> $GITHUB_ENV
+          echo "PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV
+
+      - name: Print Extracted Values
+        run: |
+          echo "Instance ID: $INSTANCE_ID"
+          echo "State: $INSTANCE_STATE"
+          echo "Public IP: $PUBLIC_IP"
