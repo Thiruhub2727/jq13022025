@@ -1,0 +1,20 @@
+name: Append New Instance to JSON
+
+on: workflow_dispatch
+
+jobs:
+  modify_array:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON File
+        run: |
+          echo '{
+            "instances": [
+              {"id": "i-123", "type": "t2.micro"}
+            ]
+          }' > instances.json
+
+      - name: Append New Instance
+        run: |
+          jq '.instances += [{"id": "i-456", "type": "t2.medium"}]' instances.json > temp.json && mv temp.json instances.json
+          cat instances.json
