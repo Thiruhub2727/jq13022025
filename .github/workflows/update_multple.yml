@@ -1,0 +1,20 @@
+name: Update Multiple JSON Fields
+
+on: workflow_dispatch
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON File
+        run: |
+          echo '{
+            "name": "John Doe",
+            "age": 30,
+            "city": "New York"
+          }' > data.json
+
+      - name: Update JSON Data
+        run: |
+          jq '.age = 35 | .city = "Los Angeles"' data.json > temp.json && mv temp.json data.json
+          cat data.json
