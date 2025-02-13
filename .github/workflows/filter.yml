@@ -1,0 +1,22 @@
+name: Filter Running EC2 Instances
+
+on: workflow_dispatch
+
+jobs:
+  filter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON File
+        run: |
+          echo '{
+            "instances": [
+              {"id": "i-123", "state": "running"},
+              {"id": "i-456", "state": "stopped"},
+              {"id": "i-789", "state": "running"}
+            ]
+          }' > instances.json
+
+      - name: Filter Running Instances
+        run: |
+          jq '.instances | map(select(.state == "running"))' instances.json > running.json
+          cat running.json
