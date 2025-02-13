@@ -1,0 +1,19 @@
+name: Insert Nested JSON Data
+
+on: workflow_dispatch
+
+jobs:
+  insert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON File
+        run: |
+          echo '{
+            "name": "John Doe",
+            "age": 30
+          }' > data.json
+
+      - name: Insert Address
+        run: |
+          jq '. + { "address": { "city": "New York", "zip": "10001" } }' data.json > temp.json && mv temp.json data.json
+          cat data.json
