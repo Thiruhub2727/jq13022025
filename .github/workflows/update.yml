@@ -1,0 +1,19 @@
+name: Update JSON Values
+
+on: workflow_dispatch
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Sample JSON
+        run: |
+          echo '{
+            "instance_id": "i-0123456789abcdef",
+            "instance_type": "t2.micro"
+          }' > vm.json
+
+      - name: Update Instance Type
+        run: |
+          jq '.instance_type = "t2.large"' vm.json > temp.json && mv temp.json vm.json
+          cat vm.json
