@@ -1,0 +1,19 @@
+name: Minify JSON
+
+on: workflow_dispatch
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Pretty JSON
+        run: |
+          echo '{
+            "id": "i-123",
+            "type": "t2.micro"
+          }' > instance.json
+
+      - name: Minify JSON
+        run: |
+          jq -c '.' instance.json > minified.json
+          cat minified.json
