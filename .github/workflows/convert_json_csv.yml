@@ -1,0 +1,19 @@
+name: Convert JSON to CSV
+
+on: workflow_dispatch
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON File
+        run: |
+          echo '[
+            {"id": "i-123", "type": "t2.micro"},
+            {"id": "i-456", "type": "m5.large"}
+          ]' > instances.json
+
+      - name: Convert JSON to CSV
+        run: |
+          jq -r '["ID", "Type"], (.[] | [.id, .type]) | @csv' instances.json > instances.csv
+          cat instances.csv
