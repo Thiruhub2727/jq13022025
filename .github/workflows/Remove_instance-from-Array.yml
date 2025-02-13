@@ -1,0 +1,21 @@
+name: Remove an Instance from JSON Array
+
+on: workflow_dispatch
+
+jobs:
+  modify_array:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create JSON File
+        run: |
+          echo '{
+            "instances": [
+              {"id": "i-123", "type": "t2.micro"},
+              {"id": "i-456", "type": "t2.medium"}
+            ]
+          }' > instances.json
+
+      - name: Remove Instance i-123
+        run: |
+          jq '.instances |= map(select(.id != "i-123"))' instances.json > temp.json && mv temp.json instances.json
+          cat instances.json
