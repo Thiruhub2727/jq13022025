@@ -1,0 +1,42 @@
+name: Get AWS EC2 Instance Details Recursively
+
+on:
+  workflow_dispatch:
+
+jobs:
+  get-vm-details:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Fetch EC2 Instance JSON
+        run: |
+          aws ec2 describe-instances --query "Reservations[].Instances[]" --output json > ec2.json
+          echo "✅ Fetched EC2 JSON"
+
+      - name: Extract Instance Details Recursively
+        run: |
+          INSTANCE_ID=$(jq -r '.. | objects | .InstanceId? // empty' ec2.json)
+          PUBLIC_IP=$(jq -r '.. | objects | .PublicIpAddress? // empty' ec2.json)
+          INSTANCE_TYPE=$(jq -r '.. | objects | .InstanceType? // empty' ec2.json)
+          PRIVATE_IP=$(jq -r '.. | objects | .PrivateIpAddress? // empty' ec2.json)
+
+          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+          echo "PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV
+          echo "INSTANCE_TYPE=$INSTANCE_TYPE" >> $GITHUB_ENV
+          echo "PRIVATE_IP=$PRIVATE_IP" >> $GITHUB_ENV
+
+      - name: Print Extracted Values
+        run: |
+          echo "✅ Instance ID: $INSTANCE_ID"
+          echo "✅ Public IP: $PUBLIC_IP"
+          echo "✅ Instance Type: $INSTANCE_TYPE"
+          echo "✅ Private IP: $PRIVATE_IP"
